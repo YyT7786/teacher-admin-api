@@ -2,6 +2,15 @@
 
 REST API for teacher-student administration built with Node.js, TypeScript, Express 5, and MySQL.
 
+## Hosted API
+
+| | URL |
+|---|---|
+| **API base** | https://teacher-admin-api-production.up.railway.app |
+| **Swagger UI** | https://teacher-admin-api-production.up.railway.app/api-docs |
+
+The API is deployed on [Railway](https://railway.app). Use the Swagger UI to explore and try all endpoints interactively without any local setup.
+
 ## Tech Stack
 
 - **Runtime:** Node.js 18+, TypeScript
@@ -64,7 +73,7 @@ docker compose down -v && docker compose up -d # wipe data and reset schema
 npm test
 ```
 
-All 35 unit tests run without a database connection (services and controllers are tested with mocked dependencies).
+All 48 unit tests run without a database connection (services and controllers are tested with mocked dependencies).
 
 ## API Endpoints
 
