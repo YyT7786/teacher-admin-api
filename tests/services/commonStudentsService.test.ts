@@ -44,4 +44,10 @@ describe('commonStudentsService', () => {
       ['t1@x.com', 't2@x.com', 't3@x.com', 3]
     );
   });
+
+  it('returns empty array when teacher does not exist', async () => {
+    mockPool.execute.mockResolvedValueOnce([[]]);
+    const result = await commonStudentsService(mockPool as any, ['nonexistent@gmail.com']);
+    expect(result).toEqual([]);
+  });
 });

@@ -57,4 +57,38 @@ describe('notificationService', () => {
       expect.arrayContaining(['alice@x.com', 'bob@y.com'])
     );
   });
+
+  it('excludes @mentioned students who are suspended', async () => {
+    mockPool.execute.mockResolvedValueOnce([[]]);
+    const result = await notificationService(
+      mockPool as any,
+      'teacherken@gmail.com',
+      'Hello @suspendedstudent@gmail.com'
+    );
+    expect(result).toEqual([]);
+    expect(mockPool.execute).toHaveBeenCalledWith(
+      expect.stringContaining('is_suspended = FALSE'),
+      expect.arrayContaining(['suspendedstudent@gmail.com'])
+    );
+  });
+
+  it('returns student only once when both registered and @mentioned', async () => {
+    mockPool.execute.mockResolvedValueOnce([[{ email: 'studentbob@gmail.com' }]]);
+    const result = await notificationService(
+      mockPool as any,
+      'teacherken@gmail.com',
+      'Hey @studentbob@gmail.com'
+    );
+    expect(result.filter((e: string) => e === 'studentbob@gmail.com')).toHaveLength(1);
+  });
+
+  it('returns student only once when @mentioned multiple times', async () => {
+    mockPool.execute.mockResolvedValueOnce([[{ email: 'student@gmail.com' }]]);
+    const result = await notificationService(
+      mockPool as any,
+      'teacher@gmail.com',
+      'Hey @student@gmail.com and again @student@gmail.com'
+    );
+    expect(result.filter((e: string) => e === 'student@gmail.com')).toHaveLength(1);
+  });
 });

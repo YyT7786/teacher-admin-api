@@ -104,4 +104,21 @@ describe('registerService', () => {
       [7, 55]
     );
   });
+
+  it('re-registering an already-registered student succeeds without error (INSERT IGNORE is idempotent)', async () => {
+    mockConn.execute
+      .mockResolvedValueOnce([{ insertId: 1 }])  // upsert teacher
+      .mockResolvedValueOnce([{ insertId: 10 }]) // upsert student
+      .mockResolvedValueOnce([{}]);              // INSERT IGNORE is a no-op if already registered
+
+    await expect(
+      registerService(mockPool as any, 'teacher@gmail.com', ['student@gmail.com'])
+    ).resolves.toBeUndefined();
+
+    expect(mockConn.execute).toHaveBeenCalledWith(
+      'INSERT IGNORE INTO teacher_students (teacher_id, student_id) VALUES (?, ?)',
+      [1, 10]
+    );
+    expect(mockConn.commit).toHaveBeenCalled();
+  });
 });

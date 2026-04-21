@@ -29,4 +29,9 @@ describe('suspendService', () => {
     await suspendService(mockPool as any, 'student@gmail.com');
     expect(mockPool.execute).toHaveBeenCalledTimes(1);
   });
+
+  it('suspending an already-suspended student succeeds without error (idempotent)', async () => {
+    mockPool.execute.mockResolvedValueOnce([{ affectedRows: 1 }]);
+    await expect(suspendService(mockPool as any, 'alreadysuspended@gmail.com')).resolves.toBeUndefined();
+  });
 });
