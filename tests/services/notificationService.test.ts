@@ -17,14 +17,16 @@ describe('notificationService', () => {
     mockPool.execute.mockResolvedValueOnce([[
       { email: 'studentbob@gmail.com' },
       { email: 'studentagnes@gmail.com' },
+      { email: 'studentmiche@gmail.com' },
     ]]);
     const result = await notificationService(
       mockPool as any,
       'teacherken@gmail.com',
       'Hello! @studentagnes@gmail.com @studentmiche@gmail.com'
     );
-    expect(result).toContain('studentagnes@gmail.com');
     expect(result).toContain('studentbob@gmail.com');
+    expect(result).toContain('studentagnes@gmail.com');
+    expect(result).toContain('studentmiche@gmail.com');
   });
 
   it('excludes suspended students (SQL handles this via is_suspended = FALSE)', async () => {

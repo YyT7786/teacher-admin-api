@@ -50,6 +50,7 @@ describe('POST /api/register', () => {
   });
 
   it('returns 500 if service throws', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     mockRegisterService.mockRejectedValueOnce(new Error('DB error'));
     const res = await request(app)
       .post('/api/register')
