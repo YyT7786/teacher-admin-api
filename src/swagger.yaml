@@ -1,0 +1,159 @@
+openapi: 3.0.0
+info:
+  title: Teacher Administration API
+  version: 1.0.0
+  description: REST API for teacher-student administration
+
+servers:
+  - url: http://localhost:3000
+
+paths:
+  /api/register:
+    post:
+      summary: Register students to a teacher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [teacher, students]
+              properties:
+                teacher:
+                  type: string
+                  example: teacherken@gmail.com
+                students:
+                  type: array
+                  items:
+                    type: string
+                  example: [studentjon@gmail.com, studenthon@gmail.com]
+      responses:
+        "204":
+          description: Students registered successfully
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                message: '"students" must be a non-empty array of strings (e.g. ["student1@gmail.com", "student2@gmail.com"])'
+
+  /api/commonstudents:
+    get:
+      summary: Retrieve students common to all specified teachers
+      parameters:
+        - name: teacher
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          example: teacherken@gmail.com
+      responses:
+        "200":
+          description: List of common students
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  students:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                      [commonstudent1@gmail.com, commonstudent2@gmail.com]
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                message: 'At least one "teacher" query parameter is required (e.g. ?teacher=teacherken@gmail.com)'
+
+  /api/suspend:
+    post:
+      summary: Suspend a student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [student]
+              properties:
+                student:
+                  type: string
+                  example: studentmary@gmail.com
+      responses:
+        "204":
+          description: Student suspended successfully
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                message: '"student" must be a non-empty string (e.g. "studentmary@gmail.com")'
+        "404":
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                message: 'Student not found: studentmary@gmail.com'
+
+  /api/retrievefornotifications:
+    post:
+      summary: Retrieve students who can receive a notification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [teacher, notification]
+              properties:
+                teacher:
+                  type: string
+                  example: teacherken@gmail.com
+                notification:
+                  type: string
+                  example: Hello! @studentagnes@gmail.com
+      responses:
+        "200":
+          description: List of notification recipients
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recipients:
+                    type: array
+                    items:
+                      type: string
+                    example: [studentbob@gmail.com, studentagnes@gmail.com]
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                message: '"notification" must be a non-empty string'
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: '"teacher" must be a non-empty string (e.g. "teacherken@gmail.com")'
