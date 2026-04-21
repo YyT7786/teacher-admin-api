@@ -1,4 +1,6 @@
 import { Pool, ResultSetHeader } from 'mysql2/promise';
+import { httpError } from '../utils/helpers';
+import { HttpStatus } from '../utils/constants';
 
 async function suspendService(pool: Pool, studentEmail: string): Promise<void> {
   const [result] = await pool.execute<ResultSetHeader>(
@@ -6,7 +8,7 @@ async function suspendService(pool: Pool, studentEmail: string): Promise<void> {
     [studentEmail]
   );
   if (result.affectedRows === 0) {
-    throw Object.assign(new Error(`Student not found: ${studentEmail}`), { statusCode: 404 });
+    throw httpError(HttpStatus.NOT_FOUND, `Student not found: ${studentEmail}`);
   }
 }
 

@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import commonStudentsService from '../services/commonStudentsService';
 import pool from '../db/pool';
-import { toStringArray, badRequest } from '../utils/typeGuards';
+import { toStringArray } from '../utils/typeGuards';
+import { badRequest } from '../utils/helpers';
+import { HttpStatus } from '../utils/constants';
 
 async function commonStudentsController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -9,7 +11,7 @@ async function commonStudentsController(req: Request, res: Response, next: NextF
     if (!teacher) return badRequest(next, 'At least one teacher query parameter is required');
     const teachers = toStringArray(teacher);
     const students = await commonStudentsService(pool, teachers);
-    res.json({ students });
+    res.status(HttpStatus.OK).json({ students });
   } catch (err) {
     next(err);
   }

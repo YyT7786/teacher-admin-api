@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import notificationService from '../services/notificationService';
 import pool from '../db/pool';
-import { isString, badRequest } from '../utils/typeGuards';
+import { isString } from '../utils/typeGuards';
+import { badRequest } from '../utils/helpers';
+import { HttpStatus } from '../utils/constants';
 
 async function notificationController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -9,7 +11,7 @@ async function notificationController(req: Request, res: Response, next: NextFun
     if (!isString(teacher)) return badRequest(next, 'teacher is required');
     if (!isString(notification)) return badRequest(next, 'notification is required');
     const recipients = await notificationService(pool, teacher, notification);
-    res.json({ recipients });
+    res.status(HttpStatus.OK).json({ recipients });
   } catch (err) {
     next(err);
   }

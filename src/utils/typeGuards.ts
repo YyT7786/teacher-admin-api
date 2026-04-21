@@ -11,7 +11,3 @@ export function toStringArray(val: unknown): string[] {
   if (isString(val)) return [val];
   return [];
 }
-
-export function badRequest(next: (err: unknown) => void, message: string): void {
-  next(Object.assign(new Error(message), { statusCode: 400 }));
-}
